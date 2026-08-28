@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spontaneous Walkie</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%B6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3E7;
+    --cream-2:#F3E7D5;
+    --plum:#463641;
+    --plum-soft:#6b5866;
+    --pink:#F6C9D9;
+    --pink-deep:#EFA9C3;
+    --yellow:#FCDE7C;
+    --yellow-deep:#F6C74B;
+    --sage:#BBE3BC;
+    --sage-deep:#93CE96;
+    --lavender:#D6C4EE;
+    --lavender-deep:#B79BE0;
+    --coral:#F2795B;
+    --coral-deep:#E15E3F;
+    --sky:#AFE0E6;
+    --shadow: 0 6px 0 rgba(70,54,65,0.18);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.6), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(255,255,255,0.5), transparent 45%),
+      var(--cream);
+    font-family:'Nunito', sans-serif;
+    color:var(--plum);
+    display:flex;
+    justify-content:center;
+    padding: clamp(16px, 4vw, 40px);
+  }
+
+  .page{ width:100%; max-width:560px; }
+
+  header{ text-align:center; margin-bottom: 22px; }
+
+  .eyebrow{
+    font-weight:800;
+    letter-spacing:.14em;
+    font-size:12px;
+    text-transform:uppercase;
+    color:var(--coral-deep);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    padding:6px 14px;
+    border-radius:999px;
+    border:2px solid var(--plum);
+    box-shadow: var(--shadow);
+  }
+
+  h1{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size: clamp(32px, 8vw, 44px);
+    margin: 14px 0 6px;
+    line-height:1.02;
+  }
+  h1 span{ color: var(--coral-deep); }
+
+  .sub{
+    font-weight:700;
+    color: var(--plum-soft);
+    font-size:15px;
+    max-width:360px;
+    margin: 0 auto;
+  }
+
+  .cabinet{
+    background: #fff;
+    border: 3px solid var(--plum);
+    border-radius: 28px;
+    padding: 18px;
+    box-shadow: 0 10px 0 rgba(70,54,65,0.15), 0 16px 30px rgba(70,54,65,0.12);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .cabinet::before{
+    content:"";
+    position:absolute;
+    top:14px; left:0; right:0;
+    height:10px;
+    background-image: radial-gradient(circle, var(--plum) 2.5px, transparent 2.6px);
+    background-size: 22px 10px;
+    opacity:.18;
+    pointer-events:none;
+  }
+
+  .reels{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top: 10px;
+  }
+
+  .reel{
+    border:3px solid var(--plum);
+    border-radius:18px;
+    padding: 14px 16px;
+    position:relative;
+    min-height: 78px;
+    display:flex;
+    align-items:center;
+    overflow:hidden;
+    isolation:isolate;
+  }
+
+  .reel::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0) 45%);
+    pointer-events:none;
+    z-index:3;
+  }
+
+  #reel-station{ background: var(--sky); }
+  #reel-rule{ background: var(--pink); }
+
+  .slot-window{
+    flex:1 1 auto;
+    min-width:0;
+    height:50px;
+    overflow:hidden;
+    position:relative;
+    transition: filter .18s ease;
+  }
+  .slot-window.spin-blur{ filter: blur(1.6px); }
+
+  .slot-strip{
+    display:flex;
+    flex-direction:column;
+    will-change: transform;
+  }
+
+  .slot-item{
+    height:50px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+  }
+
+  .reel-icon{
+    width:44px;height:44px;flex:0 0 auto;
+    filter: drop-shadow(0 2px 0 rgba(70,54,65,0.15));
+  }
+
+  .reel-body{ display:flex; flex-direction:column; min-width:0; flex:1 1 auto; }
+
+  .reel-label{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.55;
+    margin-bottom:2px;
+  }
+
+  .reel-text{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size: clamp(17px, 4.6vw, 21px);
+    line-height:1.05;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .zone-pill{
+    font-family:'Nunito';
+    font-weight:800;
+    font-size:11px;
+    letter-spacing:.05em;
+    padding:5px 11px;
+    border-radius:999px;
+    border:2px solid var(--plum);
+    background:#fff;
+    margin-left:auto;
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .zone-1{ background: var(--coral); color:#fff; }
+  .zone-2{ background: var(--sage-deep); color:#26361f; }
+  .zone-3{ background: var(--lavender-deep); color:#2c1f42; }
+
+  .reel.landed{ animation: land .38s ease; }
+  @keyframes land{
+    0%{ transform: scale(1.04); }
+    55%{ transform: scale(0.97); }
+    100%{ transform: scale(1); }
+  }
+
+  .lever-wrap{ display:flex; justify-content:center; margin: 22px 0 6px; }
+
+  #shuffle{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:19px;
+    letter-spacing:.02em;
+    color:#fff;
+    background: var(--coral);
+    border: 3px solid var(--plum);
+    border-radius: 999px;
+    padding: 16px 40px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    box-shadow: 0 7px 0 var(--coral-deep);
+    transition: transform .08s ease, box-shadow .08s ease;
+    position:relative;
+  }
+  #shuffle:hover{ filter:brightness(1.03); }
+  #shuffle:active,
+  #shuffle.pressed{
+    transform: translateY(6px);
+    box-shadow: 0 1px 0 var(--coral-deep);
+  }
+  #shuffle:focus-visible{ outline:3px solid var(--plum); outline-offset:3px; }
+  #shuffle svg{ width:22px; height:22px; flex:0 0 auto; }
+  #shuffle.spin svg{ animation: spinicon .7s linear infinite; }
+  @keyframes spinicon{ to{ transform:rotate(360deg); } }
+
+  .sparkle{
+    position:absolute;
+    pointer-events:none;
+    font-size: 16px;
+    animation: pop .7s ease forwards;
+  }
+  @keyframes pop{
+    0%{ transform: translate(0,0) scale(0.4) rotate(0deg); opacity:0; }
+    25%{ opacity:1; }
+    100%{ transform: translate(var(--dx), var(--dy)) scale(1) rotate(60deg); opacity:0; }
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 22px;
+    font-size:12px;
+    font-weight:700;
+    color: var(--plum-soft);
+    opacity:.75;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #shuffle.spin svg{ animation:none; }
+    .reel.landed{ animation:none; }
+    .sparkle{ animation:none; display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <span class="eyebrow">🎡 London Zone 1–3</span>
+    <h1>Spontaneous<br><span>Walkie</span></h1>
+    <p class="sub">Hit shuffle for the next spontaneous walk location and rule</p>
+  </header>
+
+  <div class="cabinet">
+    <div class="reels">
+
+      <div class="reel" id="reel-station">
+        <div class="slot-window" id="station-window">
+          <div class="slot-strip" id="station-strip"></div>
+        </div>
+      </div>
+
+      <div class="reel" id="reel-rule">
+        <div class="slot-window" id="rule-window">
+          <div class="slot-strip" id="rule-strip"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="lever-wrap">
+      <button id="shuffle" aria-label="Shuffle route and rules">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M16 3h5v5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 20L21 3" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M21 16v5h-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 15l6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M4 4l5 5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+        <span id="shuffle-label">Shuffle</span>
+      </button>
+    </div>
+  </div>
+
+  <footer>Land somewhere new every time. Zones are for fun, not TfL gospel.</footer>
+</div>
+
+<script>
+/* ---------------- Data ---------------- */
+const STATIONS = [
+  ...["Oxford Circus","Piccadilly Circus","Bond Street","Green Park","Victoria","Westminster","Waterloo","Bank","Liverpool Street","Moorgate","Farringdon","King's Cross St. Pancras","Euston","Baker Street","Paddington","South Kensington","Sloane Square","Knightsbridge","Marble Arch","Tottenham Court Road","Leicester Square","Covent Garden","Holborn","St. Paul's","Temple","Embankment","Charing Cross","Blackfriars","Monument","Tower Hill","Aldgate","Barbican","Old Street","Angel","Pimlico","Elephant & Castle","London Bridge"].map(n=>({name:n, zone:1})),
+  ...["Camden Town","Chalk Farm","Kentish Town","Highbury & Islington","Bethnal Green","Mile End","Bow Road","Canary Wharf","Bermondsey","Canada Water","Brixton","Clapham Common","Clapham North","Clapham South","Balham","Earl's Court","West Brompton","Fulham Broadway","Parsons Green","Putney Bridge","Hammersmith","Shepherd's Bush","White City","Kilburn","West Hampstead","Finchley Road","Swiss Cottage","St. John's Wood","Maida Vale","Warwick Avenue","Queen's Park","Archway","Tufnell Park","Holloway Road","Finsbury Park","Greenwich","Peckham Rye","Herne Hill"].map(n=>({name:n, zone:2})),
+  ...["Wimbledon Park","East Putney","Southfields","Acton Town","Chiswick Park","Turnham Green","Ealing Common","Northfields","Willesden Green","Dollis Hill","Neasden","Wembley Park","Wembley Central","Golders Green","East Finchley","Highgate","Woodside Park","Wood Green","Bounds Green","Arnos Grove","Southgate","Walthamstow Central","Blackhorse Road","Tottenham Hale","Leytonstone","Leyton","Stratford","West Ham","Plaistow","East Ham","Beckton","Canning Town","North Greenwich"].map(n=>({name:n, zone:3})),
+];
+
+const COLOURS = [
+  {name:"Red", hex:"#EB5757"}, {name:"Orange", hex:"#F2994A"}, {name:"Yellow", hex:"#F2C94C"},
+  {name:"Green", hex:"#6FCF97"}, {name:"Teal", hex:"#56CCC2"}, {name:"Blue", hex:"#56A6EA"},
+  {name:"Purple", hex:"#BB6BD9"}, {name:"Pink", hex:"#F2A6C9"}, {name:"Black", hex:"#5b4d55"},
+  {name:"White", hex:"#FFFFFF"}, {name:"Silver", hex:"#C7CDD1"}, {name:"Gold", hex:"#E8C15A"},
+];
+
+const DIRECTIONS = ["Left","Right"];
+const RULE_TYPES = ["colour","object","direction"];
+
+/* ---------------- Icons ---------------- */
+const P = "#463641";
+
+function faceDots(cx1,cy1,cx2,cy2,r){
+  return `<circle cx="${cx1}" cy="${cy1}" r="${r}" fill="${P}"/><circle cx="${cx2}" cy="${cy2}" r="${r}" fill="${P}"/>`;
+}
+
+function colourIcon(hex){
+  return `<path d="M32 8c11 8 18 17 18 26a18 18 0 1 1-36 0c0-9 7-18 18-26z" fill="${hex}" stroke="${P}" stroke-width="3"/>
+  ${faceDots(26,38,38,38,2.4)}
+  <path d="M27 45q5 4 10 0" stroke="${P}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+}
+
+function bikeIcon(){
+  return `<circle cx="17" cy="44" r="11" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <circle cx="47" cy="44" r="11" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M17 44l13-24h9M17 44l20-6 10 6M30 20l7 6" stroke="${P}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M40 14h6" stroke="${P}" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="17" cy="44" r="2" fill="${P}"/><circle cx="47" cy="44" r="2" fill="${P}"/>`;
+}
+
+function scooterIcon(){
+  return `<circle cx="16" cy="50" r="6" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <circle cx="48" cy="50" r="6" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M16 50h22l6-30M44 20h8M22 50l16-24" stroke="${P}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M44 8v14" stroke="${P}" stroke-width="3" stroke-linecap="round"/>
+  <path d="M38 8h12" stroke="${P}" stroke-width="3" stroke-linecap="round"/>`;
+}
+
+function dogIcon(){
+  return `<ellipse cx="32" cy="36" rx="19" ry="16" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M15 24 8 10 24 20z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M49 24 56 10 40 20z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  ${faceDots(25,34,39,34,2.6)}
+  <ellipse cx="32" cy="42" rx="3.4" ry="2.6" fill="${P}"/>
+  <path d="M26 47q6 5 12 0" stroke="${P}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+}
+
+function catIcon(){
+  return `<path d="M13 36a19 16 0 1 0 38 0 19 16 0 1 0-38 0z" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M14 26 6 10l16 10z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M50 26 58 10 42 20z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  ${faceDots(25,35,39,35,2.6)}
+  <path d="M32 40l-3 3h6z" fill="${P}"/>
+  <path d="M6 38h10M6 44h9M48 38h10M49 44h9" stroke="${P}" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M26 47q6 4 12 0" stroke="${P}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+}
+
+function coffeeIcon(){
+  return `<path d="M14 24h30l-3 24a6 6 0 0 1-6 5H23a6 6 0 0 1-6-5l-3-24z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M44 26h4a7 7 0 0 1 0 14h-3" stroke="${P}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M22 10q3 4 0 8M31 10q3 4 0 8M40 10q3 4 0 8" stroke="${P}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+}
+
+function stickerIcon(){
+  return `<path d="M14 14h28v22l-8 8H14z" fill="#FCE07A" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M34 36v8l8-8z" fill="#fff" stroke="${P}" stroke-width="2.6" stroke-linejoin="round"/>
+  ${faceDots(24,26,32,26,2.2)}
+  <path d="M22 32q4 3 8 0" stroke="${P}" stroke-width="2.2" stroke-linecap="round" fill="none"/>`;
+}
+
+function bottleIcon(){
+  return `<rect x="26" y="6" width="12" height="8" rx="2" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M24 14h16l3 8v30a4 4 0 0 1-4 4H25a4 4 0 0 1-4-4V22z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M21 34h22" stroke="${P}" stroke-width="2.6"/>`;
+}
+
+function capIcon(){
+  return `<path d="M10 40c0-13 10-22 22-22s22 9 22 22" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M10 40h44a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M44 30q10 0 12 8" stroke="${P}" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="32" cy="16" r="2.6" fill="${P}"/>`;
+}
+
+function scarfIcon(){
+  return `<path d="M12 20q10-8 20 0t20 0" stroke="${P}" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M18 20v18a5 5 0 0 0 5 5h3M46 20v26a5 5 0 0 1-5 5h-3" stroke="${P}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16 38h10M14 44h10M40 46h10M38 51h10" stroke="${P}" stroke-width="2.4" stroke-linecap="round"/>`;
+}
+
+function glovesIcon(){
+  return `<path d="M12 26c0-6 5-10 10-10s10 4 10 10v18a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6z" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M12 26a5 5 0 0 1 9-3" stroke="${P}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+  <path d="M32 26c0-6 5-10 10-10s10 4 10 10v18a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6z" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M32 26a5 5 0 0 1 9-3" stroke="${P}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+}
+
+function bookIcon(){
+  return `<path d="M32 16c-6-4-14-4-20-1v34c6-3 14-3 20 1z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 16c6-4 14-4 20-1v34c-6-3-14-3-20 1z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 16v34" stroke="${P}" stroke-width="2.6"/>
+  <path d="M16 24h10M16 30h10M38 24h10M38 30h10" stroke="${P}" stroke-width="2" stroke-linecap="round" opacity=".6"/>`;
+}
+
+function kindleIcon(){
+  return `<rect x="18" y="8" width="28" height="48" rx="5" fill="#fff" stroke="${P}" stroke-width="3"/>
+  <path d="M24 20h16M24 27h16M24 34h10" stroke="${P}" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="32" cy="48" r="2.2" fill="${P}"/>`;
+}
+
+function newspaperIcon(){
+  return `<path d="M10 14h30v34l-6-4-6 4-6-4-6 4-6-4z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 20h14v28l-7-4-7 4z" fill="#fff" stroke="${P}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M15 21h20M15 27h20M15 33h12" stroke="${P}" stroke-width="2.2" stroke-linecap="round"/>`;
+}
+
+function numberIcon(num){
+  return `<circle cx="32" cy="32" r="27" fill="#F6C74B" stroke="${P}" stroke-width="3"/>
+  <text x="32" y="41" text-anchor="middle" font-family="'Baloo 2', sans-serif" font-weight="800" font-size="${num>9?22:26}" fill="${P}">${num}</text>`;
+}
+
+const OBJECT_DEFS = {
+  Bike:       { icon: bikeIcon,       phrase: "Find a bike" },
+  Scooter:    { icon: scooterIcon,    phrase: "Find a scooter" },
+  Dog:        { icon: dogIcon,        phrase: "Find a dog" },
+  Cat:        { icon: catIcon,        phrase: "Find a cat" },
+  Coffee:     { icon: coffeeIcon,     phrase: "Find a coffee cup" },
+  Sticker:    { icon: stickerIcon,    phrase: "Find a sticker" },
+  Bottle:     { icon: bottleIcon,     phrase: "Find a bottle" },
+  Cap:        { icon: capIcon,        phrase: "Find a cap" },
+  Scarf:      { icon: scarfIcon,      phrase: "Find a scarf" },
+  Gloves:     { icon: glovesIcon,     phrase: "Find a pair of gloves" },
+  Book:       { icon: bookIcon,       phrase: "Find a book" },
+  Kindle:     { icon: kindleIcon,     phrase: "Find a kindle" },
+  Newspaper:  { icon: newspaperIcon,  phrase: "Find a newspaper" },
+};
+const OBJECT_KEYS = [...Object.keys(OBJECT_DEFS), "Number"];
+
+function randomObjectRule(){
+  const key = OBJECT_KEYS[Math.floor(Math.random()*OBJECT_KEYS.length)];
+  if(key === "Number"){
+    const num = 1 + Math.floor(Math.random()*100);
+    return { text: `Find the number ${num}`, icon: numberIcon(num) };
+  }
+  const def = OBJECT_DEFS[key];
+  return { text: def.phrase, icon: def.icon() };
+}
+
+function arrowIcon(dir){
+  const flip = dir === "Left" ? "" : "scale(-1,1) translate(-64,0)";
+  return `<g transform="${flip}">
+    <circle cx="32" cy="32" r="27" fill="#93CE96" stroke="${P}" stroke-width="3"/>
+    <path d="M38 18L22 32l16 14" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>`;
+}
+
+const STATION_ICON = `<circle cx="32" cy="32" r="27" stroke="${P}" stroke-width="3.2" fill="#fff"/>
+  <path d="M20 36h24M20 28h24" stroke="${P}" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="24" cy="44" r="3.4" fill="${P}"/><circle cx="40" cy="44" r="3.4" fill="${P}"/>`;
+
+/* ---------------- Rule generation ---------------- */
+function randomRule(){
+  const type = RULE_TYPES[Math.floor(Math.random()*RULE_TYPES.length)];
+  if(type === "colour"){
+    const c = COLOURS[Math.floor(Math.random()*COLOURS.length)];
+    return { type, value: c, text: `Spot something ${c.name.toLowerCase()}`, icon: colourIcon(c.hex) };
+  }
+  if(type === "object"){
+    const o = randomObjectRule();
+    return { type, value: o.text, text: o.text, icon: o.icon };
+  }
+  const d = DIRECTIONS[Math.floor(Math.random()*DIRECTIONS.length)];
+  return { type, value: d, text: `Turn ${d.toLowerCase()}`, icon: arrowIcon(d) };
+}
+
+const rand = arr => arr[Math.floor(Math.random()*arr.length)];
+
+/* ---------------- Item builders ---------------- */
+function buildStationItem(value){
+  return `<div class="slot-item">
+    <svg class="reel-icon" viewBox="0 0 64 64" fill="none">${STATION_ICON}</svg>
+    <div class="reel-body">
+      <span class="reel-label">Get off at</span>
+      <span class="reel-text">${value.name}</span>
+    </div>
+    <span class="zone-pill zone-${value.zone}">ZONE ${value.zone}</span>
+  </div>`;
+}
+
+function buildRuleItem(rule){
+  return `<div class="slot-item">
+    <svg class="reel-icon" viewBox="0 0 64 64" fill="none">${rule.icon}</svg>
+    <div class="reel-body">
+      <span class="reel-label">Rule</span>
+      <span class="reel-text">${rule.text}</span>
+    </div>
+  </div>`;
+}
+
+function buildSequence(count, buildFn, generateFn, finalValue){
+  const html = [];
+  for(let i=0;i<count-1;i++){ html.push(buildFn(generateFn())); }
+  html.push(buildFn(finalValue));
+  return html;
+}
+
+/* ---------------- Slot animation ---------------- */
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const ITEM_H = 50;
+
+function spinSlot({reelEl, windowEl, stripEl, htmlItems, duration}){
+  return new Promise(resolve=>{
+    const finalHtml = htmlItems[htmlItems.length-1];
+    if(reduceMotion){
+      stripEl.innerHTML = finalHtml;
+      resolve();
+      return;
+    }
+    stripEl.innerHTML = htmlItems.join("");
+    stripEl.style.transition = "none";
+    stripEl.style.transform = "translateY(0px)";
+    windowEl.classList.add("spin-blur");
+    void stripEl.offsetHeight; // force reflow
+
+    requestAnimationFrame(()=>{
+      stripEl.style.transition = `transform ${duration}ms cubic-bezier(0.1,0.72,0.22,1)`;
+      stripEl.style.transform = `translateY(-${(htmlItems.length-1)*ITEM_H}px)`;
+    });
+
+    setTimeout(()=>{ windowEl.classList.remove("spin-blur"); }, duration*0.7);
+
+    function onEnd(e){
+      if(e.propertyName !== "transform") return;
+      stripEl.removeEventListener("transitionend", onEnd);
+      stripEl.style.transition = "none";
+      stripEl.innerHTML = finalHtml;
+      stripEl.style.transform = "translateY(0px)";
+      reelEl.classList.add("landed");
+      setTimeout(()=>reelEl.classList.remove("landed"), 400);
+      resolve();
+    }
+    stripEl.addEventListener("transitionend", onEnd);
+  });
+}
+
+/* ---------------- Init ---------------- */
+const stationReel = document.getElementById("reel-station");
+const stationWindow = document.getElementById("station-window");
+const stationStrip = document.getElementById("station-strip");
+const ruleReel = document.getElementById("reel-rule");
+const ruleWindow = document.getElementById("rule-window");
+const ruleStrip = document.getElementById("rule-strip");
+
+let current = { station: rand(STATIONS), rule: randomRule() };
+stationStrip.innerHTML = buildStationItem(current.station);
+ruleStrip.innerHTML = buildRuleItem(current.rule);
+
+function sparkleBurst(btn){
+  if(reduceMotion) return;
+  const icons = ["✨","⭐","💫","🎉"];
+  const rect = btn.getBoundingClientRect();
+  for(let i=0;i<7;i++){
+    const s = document.createElement("span");
+    s.className = "sparkle";
+    s.textContent = icons[i % icons.length];
+    const angle = (Math.PI*2*i)/7 + Math.random()*0.4;
+    const dist = 50 + Math.random()*30;
+    s.style.setProperty("--dx", Math.cos(angle)*dist + "px");
+    s.style.setProperty("--dy", Math.sin(angle)*dist + "px");
+    s.style.left = (rect.width/2) + "px";
+    s.style.top = (rect.height/2) + "px";
+    btn.appendChild(s);
+    setTimeout(()=>s.remove(), 750);
+  }
+}
+
+let spinning = false;
+
+async function doShuffle(){
+  if(spinning) return;
+  spinning = true;
+
+  const btn = document.getElementById("shuffle");
+  const label = document.getElementById("shuffle-label");
+  btn.classList.add("spin","pressed");
+  label.textContent = "Spinning…";
+  sparkleBurst(btn);
+
+  const nextStation = rand(STATIONS);
+  const nextRule = randomRule();
+
+  const ruleItems = buildSequence(12, buildRuleItem, randomRule, nextRule);
+  const stationItems = buildSequence(16, buildStationItem, ()=>rand(STATIONS), nextStation);
+
+  await Promise.all([
+    spinSlot({ reelEl: ruleReel, windowEl: ruleWindow, stripEl: ruleStrip, htmlItems: ruleItems, duration: 900 }),
+    spinSlot({ reelEl: stationReel, windowEl: stationWindow, stripEl: stationStrip, htmlItems: stationItems, duration: 1450 }),
+  ]);
+
+  current = { station: nextStation, rule: nextRule };
+
+  btn.classList.remove("spin","pressed");
+  label.textContent = "Shuffle";
+  spinning = false;
+}
+
+document.getElementById("shuffle").addEventListener("click", doShuffle);
+</script>
+</body>
+</html>
